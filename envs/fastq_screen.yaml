@@ -4,4 +4,4 @@ channels:
     - bioconda
 
 dependencies:
-    - fastq-screen=0.15.2
+    - fastq-screen

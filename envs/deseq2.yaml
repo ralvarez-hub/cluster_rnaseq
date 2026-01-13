@@ -5,8 +5,8 @@ channels:
   - r
   - defaults
 dependencies:
-  - bioconductor-deseq2=1.30.1
-  - r-openxlsx=4.2.2
+  - bioconductor-deseq2
+  - r-openxlsx
   - r-tidyr
   - r-dplyr 
   - bioconductor-limma

@@ -6,6 +6,6 @@ channels:
   - defaults
 dependencies:
   - r-matrix
-  - r-arrow=2.0.0
+  - r-arrow
   - bioconductor-gseabase
   - bioconductor-gsva
