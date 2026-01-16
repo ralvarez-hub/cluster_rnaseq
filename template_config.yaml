@@ -53,10 +53,9 @@ parameters:
         # By default RNAseq is performed without UMIs. 
         enabled: False
         # If the RNA contains UMIs, the UMI pattern must be specified:
-        # N bases will be treated  as UMI and X bases will be treated as
-        # library barcode that must be kept in the read. The same pattern 
-        # could be expressed as NNNNNN.
-        umi_pattern1: "XXXXXXNNNNNNNNNN"
+        # For Lexogen QuantSeq FWD-UMI sequencing data, the following command line will
+        # extract the UMI sequence from the read while removing the adjacent 4 nt TATA spacer
+        umi_pattern1: "(?P<umi_1>.{6})(?P<discard_1>.{4}).*"
         # By default, it is assummed that UMI sequence it is only on 
         # 5' end of read1. If there are UMIs on both reads, both
         # umi_pattern1 (in read1) and umi_pattern2 (in read2) must be 
@@ -174,12 +173,12 @@ resources:
     umi_extract_single_end:
         threads: 8
         mem_mb: 8192
-        walltime: 60
+        runtime: 60
 
     umi_extract_paired_end:
         threads: 8
         mem_mb: 8192
-        walltime: 60
+        runtime: 60
 
     trim_adapters_single_end:
         threads: 8
