@@ -29,6 +29,9 @@ ref:
         # Deafult: Cluster's shared index
         #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.9a"
         star_index: "/my/genome_idx"
+        # For Lexogen QuantSeq sequencing data, use the following STAR parameters:
+        extra: "--outFilterType BySJout --outFilterMultimapNmax 20 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --outFilterMismatchNmax 999 --outFilterMismatchNoverLmax 0.6 --alignIntronMin 20 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outSAMattributes NH HI NM MD --outSAMtype BAM SortedByCoordinate"
+        #extra: "--outSAMtype BAM SortedByCoordinate"
     
     salmon: 
        # salmon transcriptome: .fa.gz
@@ -74,12 +77,12 @@ parameters:
         seed: 12345
 
     trimming:
-        adapters: "resources/trimming/adapters.fa"
-        extra: "ktrim=r k=23 mink=11 hdist=1"
-        # If your data is Lexogen QuantSeq 3‘ mRNA-Seq, use the trimming 
-        # parameters in the following line, replacing resource_dir with
-        # your own directory.
-        #extra: "ref=/resource_dir/polyA.fa.gz,/resource_dir/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=r trimq=10 minlength=20"
+        #adapters: "resources/trimming/adapters.fa"
+        #extra: "ktrim=r k=23 mink=11 hdist=1"
+        # If your data is Lexogen QuantSeq 3'mRNA-Seq, use the following
+        # trimming adapters and parameters
+        adapters: "resources/trimming/polyA.fa.gz,resources/trimming/truseq.fa.gz"
+        extra: "k=13 ktrim=r useshortkmers=t mink=5 qtrim=r trimq=10 minlength=20"
 
     # By default fastq_screen is not performed. In case the user want to run
     # fastq_screen the enabled value must be set to True.

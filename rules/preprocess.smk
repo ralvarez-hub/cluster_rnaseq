@@ -93,11 +93,12 @@ if UMIs:
             mem_mb=get_resource('umi_extract_single_end', 'mem_mb'),
             runtime=get_resource('umi_extract_single_end', 'runtime')
         params:
-            get_params('umi_processing','umi_pattern1')
+            pattern = lambda wildcards: get_params('umi_processing','umi_pattern1')
         log:
             f"{LOGDIR}/umi_extract/{{sample}}.log"
         shell:"""
-        umi_tools extract --stdin={input} --bc-pattern={params} --log={log} --stdout={output}
+        #umi_tools extract --stdin={input} --bc-pattern={params} --log={log} --stdout={output}
+        umi_tools extract --extract-method=regex --bc-pattern "{params.pattern}" -L {log} -I {input} -S {output} 
     """   
 
     rule umi_extract_paired_end:
@@ -119,8 +120,9 @@ if UMIs:
         log:
             f"{LOGDIR}/umi_extract/{{sample}}.log"
         shell:"""
-        umi_tools extract -I {input.f1} --bc-pattern={params} --read2-in={input.f2} --log={log} \
-        --stdout={output.umi_extract1} --read2-out={output.umi_extract2}
+        #umi_tools extract -I {input.f1} --bc-pattern={params} --read2-in={input.f2} --log={log} \
+        #--stdout={output.umi_extract1} --read2-out={output.umi_extract2}
+        umi_tools extract --extract-method=regex --bc-pattern {params} -L {log} -I {input.f1} -S {ouput.umi_extract1} --read2-in={input.f2} --read2-out={output.umi_extract2}
     """
 
     rule umi_extract_paired_end_two_umis:
