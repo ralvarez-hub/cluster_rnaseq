@@ -71,8 +71,7 @@ rule star_align_se:
         mem_mb=get_resource('star_align', 'mem_mb'),
         runtime=get_resource('star_align', 'runtime')
     params:
-        # optional parameters
-        extra="--outSAMtype BAM SortedByCoordinate"
+        extra=config['ref']['star']['extra']
     log:
         f"{LOGDIR}/star/{{sample}}.log"
     conda:
@@ -95,8 +94,7 @@ rule star_align_paired:
         mem_mb=get_resource('star_align', 'mem_mb'),
         runtime=get_resource('star_align', 'runtime')
     params:
-        # optional parameters
-        extra="--outSAMtype BAM SortedByCoordinate"
+        extra=config['ref']['star']['extra']
     log:
         f"{LOGDIR}/star/{{sample}}.log"
     conda:
