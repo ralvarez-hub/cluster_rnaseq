@@ -123,7 +123,7 @@ rule htseq_count:
     log:
         f"{LOGDIR}/htseq_count/{{sample}}.log"
     conda:
-        '../envs/cuantification.yaml'
+        '../envs/quantification.yaml'
     shell: 'htseq-count -f bam -r pos {params.extra} {params.mode} {params.strandedness} {input.bam_file} {params.annotation} > {output.quant} 2> {log}'
 
 
@@ -165,7 +165,7 @@ rule featurecounts:
     log:
         f"{LOGDIR}/featureCounts/{{sample}}.log"
     conda:
-        '../envs/cuantification.yaml'
+        '../envs/quantification.yaml'
     shell: 'featureCounts {params.args} -T {threads} {params.extra} {params.strandedness} -a {params.annotation} -o {output.quant} {input.bam_file} &> {log}'
 
 
@@ -205,6 +205,6 @@ rule salmon_matrix_from_quants:
     log:
         f"{LOGDIR}/salmon_matrix_from_quants.log"
     conda:
-        '../envs/cuantification.yaml'
+        '../envs/quantification.yaml'
     script:
         '../scripts/salmon_matrix_from_quant.R'
