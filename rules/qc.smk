@@ -104,6 +104,8 @@ rule fastqc_files:
     output:
         html=f"{OUTDIR}/qc/fastqc_files/{{sample}}_{{lane}}_fq{{read}}_fastqc.html",
         zip=f"{OUTDIR}/qc/fastqc_files/{{sample}}_{{lane}}_fq{{read}}_fastqc.zip"
+    log:
+        f"{LOGDIR}/fastqc_files/{{sample}}_{{lane}}_fq{{read}}.log"
     threads: 
         get_resource("fastqc","threads")
     resources:
@@ -111,12 +113,10 @@ rule fastqc_files:
         runtime=get_resource("fastqc","runtime")
     params: 
         lambda wc: "-t {}".format(get_resource("fastqc","threads"))
-    log:
-        f"{LOGDIR}/fastqc_files/{{sample}}_{{lane}}_fq{{read}}.log"
     benchmark:
         f"{LOGDIR}/fastqc_files/{{sample}}_{{lane}}_fq{{read}}.bmk"
     wrapper:
-        "0.74.0/bio/fastqc"
+        "v7.6.0/bio/fastqc"
 
 
 # The rule Fastq_screen_indexes downloads pre-built Bowtie2 indices of commonly used genomes.
@@ -151,7 +151,7 @@ rule fastq_screen_indexes:
 rule fastq_screen_files:
     input: 
         fastq= lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read],
-        conf="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"])
+        #conf="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"])
     output:
         txt=f"{OUTDIR}/fastq_screen/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.txt",
         png=f"{OUTDIR}/fastq_screen/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.png"
@@ -169,7 +169,7 @@ rule fastq_screen_files:
     benchmark:
         f"{LOGDIR}/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}.bmk"
     wrapper:
-        "v1.23.4/bio/fastq_screen"
+        "v7.1.0/bio/fastq_screen"
 
 
 rule multiqc_files:
@@ -213,7 +213,7 @@ rule fastqc_concat:
     benchmark:
         f"{LOGDIR}/fastqc_concat/{{sample}}_R{{read}}.bmk"
     wrapper:
-        "0.74.0/bio/fastqc"
+        "v7.6.0/bio/fastqc"
 
 
 ## Fastq_screen for concat files
@@ -238,7 +238,7 @@ rule fastq_screen_concat:
     benchmark:
         f"{LOGDIR}/fastq_screen_concat/{{sample}}_R{{read}}.bmk"
     wrapper:
-        "v1.23.4/bio/fastq_screen"
+        "v7.1.0/bio/fastq_screen"
 
 
 rule multiqc_concat:
