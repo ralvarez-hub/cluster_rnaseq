@@ -27,7 +27,7 @@ ref:
         fasta: "/my/genome.fasta"
         # STAR aligner index path (auto generated if not already present)
         # Deafult: Cluster's shared index
-        #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.9a"
+        #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.11b"
         star_index: "/my/genome_idx"
         # For Lexogen QuantSeq sequencing data, use the following STAR parameters:
         extra: "--outFilterType BySJout --outFilterMultimapNmax 20 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --outFilterMismatchNmax 999 --outFilterMismatchNoverLmax 0.6 --alignIntronMin 20 --alignIntronMax 1000000 --alignMatesGapMax 1000000 --outSAMattributes NH HI NM MD --outSAMtype BAM SortedByCoordinate"
@@ -198,7 +198,7 @@ resources:
         mem_mb: 32000
         runtime: 10
 
-    star_align:
+    star_se:
         threads: 8
         mem_mb: 64000
         runtime: 60
