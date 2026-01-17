@@ -97,7 +97,6 @@ if UMIs:
         log:
             f"{LOGDIR}/umi_extract/{{sample}}.log"
         shell:"""
-        #umi_tools extract --stdin={input} --bc-pattern={params} --log={log} --stdout={output}
         umi_tools extract --extract-method=regex --bc-pattern "{params.pattern}" -L {log} -I {input} -S {output} 
     """   
 
@@ -120,8 +119,6 @@ if UMIs:
         log:
             f"{LOGDIR}/umi_extract/{{sample}}.log"
         shell:"""
-        #umi_tools extract -I {input.f1} --bc-pattern={params} --read2-in={input.f2} --log={log} \
-        #--stdout={output.umi_extract1} --read2-out={output.umi_extract2}
         umi_tools extract --extract-method=regex --bc-pattern {params} -L {log} -I {input.f1} -S {ouput.umi_extract1} --read2-in={input.f2} --read2-out={output.umi_extract2}
     """
 
@@ -159,18 +156,19 @@ rule trim_adapters_single_end:
         singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
         discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
         stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
+    log:
+        LOGDIR + "trim_adapters_single_end/{sample}.log",
     threads:
         get_resource('trim_adapters_single_end', 'threads')
     resources:
         mem_mb=get_resource('trim_adapters_single_end', 'mem_mb'),
         runtime=get_resource('trim_adapters_single_end', 'runtime')
     params:
+        command="bbdik.sh",
         adapters='ref=' + get_params('trimming','adapters'),
-        extra=get_params('trimming', 'extra')
-    log:
-        f"{LOGDIR}/trim_adapters_single_end/{{sample}}.log",
+        extra=get_params('trimming', 'extra'),
     wrapper:
-        "v1.23.5/bio/bbtools/bbduk"
+        "v8.0.3/bio/bbtools"
 
 
 rule trim_adapters_paired_end:
@@ -181,18 +179,19 @@ rule trim_adapters_paired_end:
         singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
         discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
         stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
+    log:
+        LOGDIR + "/trim_adapters_paired_end/{sample}.log"
     threads:
         get_resource('trim_adapters_paired_end', 'threads')
     resources:
         mem_mb=get_resource('trim_adapters_paired_end', 'mem_mb'),
         runtime=get_resource('trim_adapters_paired_end', 'runtime')
     params:
+        command="bbduk.sh",
         adapters='ref=' + get_params('trimming','adapters'),
         extra=get_params('trimming', 'extra') + ' tpe tbo'
-    log:
-        f"{LOGDIR}/trim_adapters_paired_end/{{sample}}.log",
     wrapper:
-        "v1.23.5/bio/bbtools/bbduk"
+        "v8.0.3/bio/bbtools"
 
 
 if downsampling:
