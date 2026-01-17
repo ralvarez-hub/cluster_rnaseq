@@ -5,9 +5,5 @@ channels:
   - r
   - defaults
 dependencies:
-  - salmon
-  - samtools
-  - star
-
-
-
+  - salmon=1.10.3
+  - samtools=1.23

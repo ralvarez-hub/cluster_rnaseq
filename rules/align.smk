@@ -58,49 +58,56 @@ rule salmon_quant_paired:
 
 
 ### STAR ###
-rule star_align_se:
+rule star_se:
     input:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         # path to STAR reference genome index
-        index=config['ref']['star']['star_index']
+        idx=config['ref']['star']['star_index'],
     output:
-        aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
-    threads:
-        get_resource('star_align', 'threads')
-    resources:
-        mem_mb=get_resource('star_align', 'mem_mb'),
-        runtime=get_resource('star_align', 'runtime')
-    params:
-        extra=config['ref']['star']['extra']
+        # see STAR manual for additional output files
+        aln=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam',
+        log=LOGDIR + '/star/{sample}/Log.out',
+        log_final=LOGDIR + '/star/{sample}/Log.final.out',
+        unmapped=OUTDIR + '/mapped/star/{sample}/unmapped.fastq',
     log:
-        f"{LOGDIR}/star/{{sample}}.log"
-    conda:
-        '../envs/aligners.yaml'
-    script:
-        "../scripts/star.py"
+        LOGDIR + '/star/{sample}/{sample}.log',
+    params:
+        # optional parameters
+        extra=config['ref']['star']['extra'],
+    threads:
+        get_resource('star_se', 'threads')
+    resources:
+        mem_mb=get_resource('star_se', 'mem_mb'),
+        runtime=get_resource('star_se', 'runtime')
+    wrapper:
+        "v3.3.7/bio/star/align"
 
 
-rule star_align_paired:
+rule star_pe_multi:
     input:
+        # use a list for multiple fastq files for one sample
+        # usually technical replicates across lanes/flowcells
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         fq2=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz",
         # path to STAR reference genome index
-        index=config['ref']['star']['star_index']
+        idx=config['ref']['star']['star_index'],
     output:
-        aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
+        # see STAR manual for additional output files
+        aln=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
+        log=LOGDIR + '/star/{sample}/Log.out',
+        sj=OUTDIR + '/star/{sample}/SJ.out.tab',
+        unmapped=[OUTDIR + '/mapped/star/{sample}/unmapped.1.fastq.gz', OUTDIR + '/mapped/star/{sample}/unmapped.2.fastq.gz'],
+    log:
+        LOGDIR + '/star/{sample}/{sample}.log', 
+    params:
+        extra=config['ref']['star']['extra']
     threads:
         get_resource("star_align", "threads")
     resources:
         mem_mb=get_resource('star_align', 'mem_mb'),
         runtime=get_resource('star_align', 'runtime')
-    params:
-        extra=config['ref']['star']['extra']
-    log:
-        f"{LOGDIR}/star/{{sample}}.log"
-    conda:
-        '../envs/aligners.yaml'
-    script:
-        "../scripts/star.py"
+    wrapper:
+        "v3.3.7/bio/star/align"
 
 
 ## HISAT-2 ##

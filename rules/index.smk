@@ -50,21 +50,22 @@ rule salmon_index:
 ## STAR RULES
 rule star_index:
     input:
-        fasta = ancient(config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-"),
-        gtf   = ancient(config["ref"]["star"]["annotation"] if config["ref"]["star"]["annotation"] else "-")
+        fasta=config["ref"]["star"]["fasta"],
+        #fasta = ancient(config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-"),
+        #gtf   = ancient(config["ref"]["star"]["annotation"] if config["ref"]["star"]["annotation"] else "-")
     output:
-        directory(config["ref"]["star"]["star_index"])
+        directory(config["ref"]["star"]["star_index"]),
     threads: 
         get_resource("star_index", "threads")
     resources:
         mem_mb=get_resource("star_index", "mem_mb"),
         runtime=get_resource("star_index", "runtime")
     params:
-        extra = ""
+        extra = "",
     log:
-        f"{LOGDIR}/star_index/index.log"
+        f"{LOGDIR}/star_index/index.log",
     wrapper:
-        "0.74.0/bio/star/index"
+        "v3.3.7/bio/star/index"
 
 
 ## HISAT-2 RULES
