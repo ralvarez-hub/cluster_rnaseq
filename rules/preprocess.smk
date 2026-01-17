@@ -157,7 +157,7 @@ rule trim_adapters_single_end:
         discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
         stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
     log:
-        LOGDIR + "trim_adapters_single_end/{sample}.log",
+        LOGDIR + "trim_adapters_single_end/{sample}.log"
     threads:
         get_resource('trim_adapters_single_end', 'threads')
     resources:
@@ -166,7 +166,7 @@ rule trim_adapters_single_end:
     params:
         command="bbdik.sh",
         adapters='ref=' + get_params('trimming','adapters'),
-        extra=get_params('trimming', 'extra'),
+        extra=get_params('trimming', 'extra')
     wrapper:
         "v8.0.3/bio/bbtools"
 
@@ -200,18 +200,19 @@ if downsampling:
             lambda wildcards: get_raw_fastq(wildcards, strand=1)
         output:
             OUTDIR + '/downsampled/{sample}_R1.fastq.gz'
+        log:
+            LOGDIR + '/downsampled/{sample}.log'
         threads:
             get_resource('downsample_single_end', 'threads')
         resources:
             mem_mb=get_resource('downsample_single_end', 'mem_mb'),
             runtime=get_resource('downsample_single_end', 'runtime')
         params:
+            command="sample",
             n=get_params('downsampling', 'n'),
-            seed=get_params('downsampling', 'seed')
-        log:
-            f"{LOGDIR}/downsampled/{{sample}}.log"
+            extra="-s " + get_params('downsampling', 'seed')
         wrapper:
-            "0.74.0/bio/seqtk/subsample/se"
+            "7.0.0/bio/seqtk"
 
 
 if downsampling:
@@ -222,15 +223,16 @@ if downsampling:
         output:
             f1=OUTDIR + '/downsampled/{sample}_R1.fastq.gz',
             f2=OUTDIR + '/downsampled/{sample}_R2.fastq.gz'
+        log:
+            LOGDIR + '/downsampled/{sample}.log'
         threads:
             get_resource('downsample_paired_end', 'threads')
         resources:
             mem_mb=get_resource('downsample_paired_end', 'mem_mb'),
             runtime=get_resource('downsample_paired_end', 'runtime')
         params:
+            command="sample",
             n=get_params('downsampling', 'n'),
-            seed=get_params('downsampling', 'seed')
-        log:
-            f"{LOGDIR}/downsampled/{{sample}}.log"
+            extra="-s " + get_params('downsampling', 'seed')
         wrapper:
-            "0.74.0/bio/seqtk/subsample/pe"
+            "7.0.0/bio/seqtk"
