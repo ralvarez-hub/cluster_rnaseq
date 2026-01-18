@@ -1,10 +1,10 @@
 ## Let snakemake use paired reads whenever possible
 if single_end:
     ruleorder: salmon_quant_se > salmon_quant_paired
-    ruleorder: star_align_se > star_align_paired
+    ruleorder: star_align_se > star_align_pe
 else:
     ruleorder: salmon_quant_paired > salmon_quant_se
-    ruleorder: star_align_paired > star_align_se
+    ruleorder: star_align_pe > star_align_se
 
 def get_hisat_reads(wildcards):
     if single_end:
@@ -17,7 +17,7 @@ def get_hisat_reads(wildcards):
 rule salmon_quant_se:
     input:
         salmon_index=config['ref']['salmon']['salmon_index'],
-        se_reads=rules.trim_adapters_single_end.output.trimmed
+        se_reads=rules.trim_adapters_single_end.output.out
     output:
         quant=f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf"
     threads:
@@ -58,7 +58,7 @@ rule salmon_quant_paired:
 
 
 ### STAR ###
-rule star_se:
+rule star_align_se:
     input:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         # path to STAR reference genome index
@@ -75,15 +75,15 @@ rule star_se:
         # optional parameters
         extra=config['ref']['star']['extra'],
     threads:
-        get_resource('star_se', 'threads')
+        get_resource('star_align_se', 'threads')
     resources:
-        mem_mb=get_resource('star_se', 'mem_mb'),
-        runtime=get_resource('star_se', 'runtime')
+        mem_mb=get_resource('star_align_se', 'mem_mb'),
+        runtime=get_resource('star_align_se', 'runtime')
     wrapper:
         "v3.3.7/bio/star/align"
 
 
-rule star_pe_multi:
+rule star_align_pe:
     input:
         # use a list for multiple fastq files for one sample
         # usually technical replicates across lanes/flowcells
@@ -93,7 +93,7 @@ rule star_pe_multi:
         idx=config['ref']['star']['star_index'],
     output:
         # see STAR manual for additional output files
-        aln=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
+        aln=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam',
         log=LOGDIR + '/star/{sample}/Log.out',
         sj=OUTDIR + '/star/{sample}/SJ.out.tab',
         unmapped=[OUTDIR + '/mapped/star/{sample}/unmapped.1.fastq.gz', OUTDIR + '/mapped/star/{sample}/unmapped.2.fastq.gz'],
@@ -102,10 +102,10 @@ rule star_pe_multi:
     params:
         extra=config['ref']['star']['extra']
     threads:
-        get_resource("star_align", "threads")
+        get_resource("star_align_pe", "threads")
     resources:
-        mem_mb=get_resource('star_align', 'mem_mb'),
-        runtime=get_resource('star_align', 'runtime')
+        mem_mb=get_resource('star_align_pe', 'mem_mb'),
+        runtime=get_resource('star_align_pe', 'runtime')
     wrapper:
         "v3.3.7/bio/star/align"
 
