@@ -99,8 +99,7 @@ rule md5:
 
 rule fastqc_files:
     input:
-        fastq= lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read],
-        flag=f"{LOGDIR}/md5.checked"
+        lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read]
     output:
         html=f"{OUTDIR}/qc/fastqc_files/{{sample}}_{{lane}}_fq{{read}}_fastqc.html",
         zip=f"{OUTDIR}/qc/fastqc_files/{{sample}}_{{lane}}_fq{{read}}_fastqc.zip"
@@ -126,7 +125,7 @@ rule fastqc_files:
 
 rule fastq_screen_indexes:
     output:
-        "res/FastQ_Screen_Genomes/fastq_screen.conf"
+        conf = config["parameters"]["fastq_screen_indexes"]["outdir"] + "/FastQ_Screen_Genomes/fastq_screen.conf"
     conda:
         "../envs/fastq_screen.yaml"
     threads: 
@@ -140,18 +139,23 @@ rule fastq_screen_indexes:
         f"{LOGDIR}/fastq_screen_indexes.log"
     benchmark:
         f"{LOGDIR}/fastq_screen_indexes.bmk"
+    
     shell:"""
-        fastq_screen --threads {threads} --get_genomes --outdir {params.outdir}/ &> {log}
-    """
+        export LC_ALL=C
+        # Manual download of Fastq Screen genomes config file
+        mkdir -p {params.outdir}
+        cd {params.outdir}
+        wget https://www.bioinformatics.babraham.ac.uk/projects/fastq_screen/genome_locations.txt
+        fastq_screen --threads {threads} --get_genomes --outdir {params.outdir} &> {log}
+    """    
 
 
-
-# Fastq_screen for single files.
+# Fastq_screen for single files
 
 rule fastq_screen_files:
     input: 
         fastq= lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read],
-        #conf="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"])
+        conf="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"])
     output:
         txt=f"{OUTDIR}/fastq_screen/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.txt",
         png=f"{OUTDIR}/fastq_screen/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.png"
@@ -220,7 +224,8 @@ rule fastqc_concat:
 
 rule fastq_screen_concat:
     input:
-        f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R{{read}}.fastq.gz"
+        fastq=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R{{read}}.fastq.gz",
+        conf="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"])
     output:
         txt=f"{OUTDIR}/fastq_screen/fastq_screen_concat/{{sample}}_R{{read}}_fastq_screen.txt",
         png=f"{OUTDIR}/fastq_screen/fastq_screen_concat/{{sample}}_R{{read}}_fastq_screen.png"
