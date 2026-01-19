@@ -152,20 +152,21 @@ rule trim_adapters_single_end:
     input:
         sample=[OUTDIR + '/' + dir_in_trim + '/{sample}_R1.fastq.gz']
     output:
-        trimmed=OUTDIR + '/trimmed/{sample}/{sample}_R1.fastq.gz',
-        singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
-        discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
+        out=OUTDIR + '/trimmed/{sample}/{sample}_R1.fastq.gz',
+        #outm=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
+        #outu=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
         stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
     log:
-        LOGDIR + "trim_adapters_single_end/{sample}.log"
+        LOGDIR + "/trim_adapters_single_end/{sample}.log"
     threads:
         get_resource('trim_adapters_single_end', 'threads')
     resources:
         mem_mb=get_resource('trim_adapters_single_end', 'mem_mb'),
         runtime=get_resource('trim_adapters_single_end', 'runtime')
     params:
-        command="bbdik.sh",
-        adapters='ref=' + get_params('trimming','adapters'),
+        command="bbduk.sh",
+        #adapters='ref=' + get_params('trimming','adapters'),
+        ref=get_params('trimming','adapters'),
         extra=get_params('trimming', 'extra')
     wrapper:
         "v8.0.3/bio/bbtools"
@@ -175,9 +176,9 @@ rule trim_adapters_paired_end:
     input:
         sample=expand(OUTDIR + '/' + dir_in_trim + '/{{sample}}_R{strand}.fastq.gz', strand=[1,2])
     output:
-        trimmed=expand(OUTDIR + '/trimmed/{{sample}}/{{sample}}_R{strand}.fastq.gz', strand=[1,2]),
-        singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
-        discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
+        out=expand(OUTDIR + '/trimmed/{{sample}}/{{sample}}_R{strand}.fastq.gz', strand=[1,2]),
+        #outm=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
+        #outu=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
         stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
     log:
         LOGDIR + "/trim_adapters_paired_end/{sample}.log"
@@ -188,7 +189,8 @@ rule trim_adapters_paired_end:
         runtime=get_resource('trim_adapters_paired_end', 'runtime')
     params:
         command="bbduk.sh",
-        adapters='ref=' + get_params('trimming','adapters'),
+        #adapters='ref=' + get_params('trimming','adapters'),
+        ref=get_params('trimming','adapters'),
         extra=get_params('trimming', 'extra') + ' tpe tbo'
     wrapper:
         "v8.0.3/bio/bbtools"
