@@ -113,7 +113,7 @@ parameters:
         # https://htseq.readthedocs.io/en/release_0.11.1/count.html
         extra: "-i 'gene_name'"
         # Mode: "union", "intersection-strict" or "intersection-nonempty" (default: union)
-        # If your data is Lexogen QuantSeq 3‘ mRNA-Seq, use the intersection-nonempty mode
+        # If your data is Lexogen QuantSeq 3' mRNA-Seq, use the intersection-nonempty mode
         mode: "-m union"
         # Strandness: "yes", "no" or "reverse" (default: yes)
         strandedness: "-s yes"
@@ -198,7 +198,12 @@ resources:
         mem_mb: 32000
         runtime: 10
 
-    star_se:
+    star_align_se:
+        threads: 8
+        mem_mb: 64000
+        runtime: 60
+
+    star_align_pe:
         threads: 8
         mem_mb: 64000
         runtime: 60
