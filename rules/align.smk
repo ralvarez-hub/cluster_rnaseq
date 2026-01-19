@@ -62,18 +62,17 @@ rule star_align_se:
     input:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         # path to STAR reference genome index
-        idx=config['ref']['star']['star_index'],
+        idx=config['ref']['star']['star_index']
     output:
         # see STAR manual for additional output files
         aln=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam',
-        log=LOGDIR + '/star/{sample}/Log.out',
-        log_final=LOGDIR + '/star/{sample}/Log.final.out',
-        unmapped=OUTDIR + '/mapped/star/{sample}/unmapped.fastq',
+        log=OUTDIR + '/mapped/star/{sample}/Log.out',
+        log_final=OUTDIR + '/mapped/star/{sample}/Log.final.out',
+        sj=OUTDIR + '/mapped/star/{sample}/SJ.out.tab'
     log:
-        LOGDIR + '/star/{sample}/{sample}.log',
+        LOGDIR + '/star/{sample}/{sample}.log'
     params:
-        # optional parameters
-        extra=config['ref']['star']['extra'],
+        extra=config['ref']['star']['extra']
     threads:
         get_resource('star_align_se', 'threads')
     resources:
@@ -90,15 +89,15 @@ rule star_align_pe:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         fq2=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz",
         # path to STAR reference genome index
-        idx=config['ref']['star']['star_index'],
+        idx=config['ref']['star']['star_index']
     output:
         # see STAR manual for additional output files
         aln=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam',
-        log=LOGDIR + '/star/{sample}/Log.out',
-        sj=OUTDIR + '/star/{sample}/SJ.out.tab',
-        unmapped=[OUTDIR + '/mapped/star/{sample}/unmapped.1.fastq.gz', OUTDIR + '/mapped/star/{sample}/unmapped.2.fastq.gz'],
+        log=OUTDIR + '/mapped/star/{sample}/Log.out',
+        log_final=OUTDIR + '/mapped/star/{sample}/Log.final.out',
+        sj=OUTDIR + '/mapped/star/{sample}/SJ.out.tab'
     log:
-        LOGDIR + '/star/{sample}/{sample}.log', 
+        LOGDIR + '/star/{sample}/{sample}.log'
     params:
         extra=config['ref']['star']['extra']
     threads:
