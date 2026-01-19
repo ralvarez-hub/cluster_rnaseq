@@ -5,5 +5,5 @@ channels:
   - r
   - defaults
 dependencies:
-  - pandas
-  - numpy
+  - pandas=2.3.3
+  - numpy=2.4.1
