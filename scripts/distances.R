@@ -52,12 +52,29 @@ sampleDist <- as.matrix(dist(t(assay(vsd[, samples])), method = "euclidean"))
 colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
 
 # Heatmaps
-pdf(snakemake@output[["pdf"]], width = 9, height = 7)
+pdf(snakemake@output[["pdf_dist"]], width = 9, height = 7)
 pheatmap(sampleDist, name = "Euclidean Distance", color = colors, 
          annotation_col = coldata, annotation_colors = levels_colors)
 dev.off()
 
-png(snakemake@output[["png"]], width = 9, height = 7, units = "in", res = 600)
+png(snakemake@output[["png_dist"]], width = 9, height = 7, units = "in", res = 600)
 pheatmap(sampleDist, name = "Euclidean Distance", color = colors,
+         annotation_col = coldata, annotation_colors = levels_colors)
+dev.off()
+
+# Pearson correlation sample distances
+sampleDist <- as.matrix(cor(assay(vsd[, samples]), method = "pearson"))
+
+# Colors
+colors <- colorRampPalette(brewer.pal(9, "Blues"))(255)
+
+# Heatmaps
+pdf(snakemake@output[["pdf_corr"]], width = 9, height = 7)
+pheatmap(sampleDist, name = "Pearson correlation", color = colors,
+         annotation_col = coldata, annotation_colors = levels_colors)
+dev.off()
+
+png(snakemake@output[["png_corr"]], width = 9, height = 7, units = "in", res = 600)
+pheatmap(sampleDist, name = "Pearson correlation", color = colors,
          annotation_col = coldata, annotation_colors = levels_colors)
 dev.off()

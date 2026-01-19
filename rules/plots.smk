@@ -44,8 +44,10 @@ rule distance:
     input:
         vst=f"{OUTDIR}/deseq2/{deseq_path}/dds_vst{{fsuffix}}.rds"
     output:
-        pdf=f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_dist{{fsuffix,.*}}." + "pdf",
-        png=f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_dist{{fsuffix,.*}}." + "png"
+        pdf_dist=f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_dist{{fsuffix,.*}}." + "pdf",
+        png_dist=f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_dist{{fsuffix,.*}}." + "png",
+        pdf_corr=f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_corr{{fsuffix,.*}}." + "pdf",
+        png_corr=f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_corr{{fsuffix,.*}}." + "png"
     threads:
         get_resource("distance", "threads")
     resources:
@@ -55,7 +57,9 @@ rule distance:
         designmatrix=config['parameters']['deseq2']['designmatrix'],
         levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
         ref_levels=ref_levels.to_list()
-    log: f"{LOGDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/dist{{fsuffix}}.log"
+    log: 
+        log_dist=f"{LOGDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/dist{{fsuffix}}.log",
+        log_corr=f"{LOGDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/corr{{fsuffix}}.log"
     conda:
         "../envs/plots.yaml"
     script: 
