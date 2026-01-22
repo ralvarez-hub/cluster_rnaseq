@@ -50,9 +50,8 @@ rule salmon_index:
 ## STAR RULES
 rule star_index:
     input:
-        fasta=config["ref"]["star"]["fasta"],
-        #fasta = ancient(config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-"),
-        #gtf   = ancient(config["ref"]["star"]["annotation"] if config["ref"]["star"]["annotation"] else "-")
+        fasta = ancient(config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-"),
+        gtf = ancient(config["ref"]["star"]["annotation"] if config["ref"]["star"]["annotation"] else "-")
     output:
         directory(config["ref"]["star"]["star_index"]),
     threads: 
